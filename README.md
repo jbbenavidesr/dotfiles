@@ -1,8 +1,6 @@
 # .Files
 
-A repo for storing my dotfiles and configurations.
+My personal dotfile configuration. Work in Progress.
 
-I'll start adding my current setup and will start slowly exploring this topic in order to
-personalize my computer even more.
+Instead of simply forking and starting from something I decided that I'll build it step by step making sure that I understand every single line that I write.
 
-I use Ubuntu, so my configs are only guaranteed to work in it.
