@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+
+script_dir="$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
+env_dir="$script_dir/env"
+dry="0"
+
+if [ -z "$XDG_CONFIG_HOME" ]; then
+    echo "no xdg config hom"
+    echo "using ~/.config"
+    XDG_CONFIG_HOME=$HOME/.config
+fi
+
+if [[ "$1" == "--dry" ]]; then
+    dry="1"
+fi
+
+log() {
+	if [[ $dry == "1" ]]; then
+		echo "[DRY_RUN]: $@"
+	else
+		echo "$@"
+	fi
+}
+
+execute() {
+	log "execute: $@"
+	if [[ $dry == "1" ]]; then
+		return
+	fi
+
+	"$@"
+}
+
+log "--------- dev-env ---------"
+
+log "env: $env_dir"
+cd $env_dir
+
+copy_dir() {
+    local source=$1
+    local target=$2
+
+    log "Copying files from $source to $target"
+
+    pushd $source > /dev/null
+    (
+        dirs=$(find . -maxdepth 1 -mindepth 1 -type d)
+        for source_dir in $dirs; do
+            target_dir=${target%/}/${source_dir#./}
+            execute rm -rf $target_dir
+            execute cp -r $source_dir $target_dir
+        done
+    )
+	popd > /dev/null
+}
+
+copy_file() {
+	local source=$1
+	local target=$2
+	local name=$(basename $source)
+    log "Copying file $source to $target"
+	execute rm $target/$name
+	execute cp $source $target/$name
+}
+
+copy_dir .config $XDG_CONFIG_HOME
+copy_file .zshrc $HOME
+
+

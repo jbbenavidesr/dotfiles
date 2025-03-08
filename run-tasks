@@ -46,4 +46,3 @@ for script in $scripts; do
 	execute $script
 
 done
-
