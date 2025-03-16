@@ -1,0 +1,13 @@
+# Script for installing Homebrew and all libs managed by brew
+
+which -s brew
+if [[ $? != 0 ]] ; then
+    echo "Homebrew not found... installing"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+else
+    echo "Homebrew found... updating"
+    brew update
+fi
+
+# Install Libraries
+brew bundle install --upgrade --global
