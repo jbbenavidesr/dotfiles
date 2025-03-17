@@ -30,6 +30,8 @@ addToPathFront() {
 }
 
 # User configuration
+export PROJECTS=$HOME/Documents/Projects
+export DOTFILES=$PROJECTS/dotfiles
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
@@ -49,6 +51,7 @@ export XDG_CONFIG_HOME=$HOME/.config
 # Setup Path
 addToPathFront $HOME/.local/scripts
 addToPathFront $HOME/.local/bin
+addToPath $DOTFILES
 
 # FZF
 # Set up fzf key bindings and fuzzy completion
