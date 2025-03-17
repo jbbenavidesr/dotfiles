@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# In general when opening a project with tmux I want to open 2 windows:
+# - Nvim
+# - A terminal
+
+# A window named term
+tmux new-window -dn term
+
+# Neovim in the current window
+nvim .
+
