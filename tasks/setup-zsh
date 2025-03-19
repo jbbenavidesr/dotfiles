@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+set -e
+
+# Script: setup-zsh.sh
+# Purpose: Ensure ZSH is the default shell and Oh My ZSH is installed
+# Dependencies: zsh (must be pre-installed)
+
+# Configuration
+LOG_PREFIX="[ZSH SETUP]"
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+# TODO: Move this to main task runner
+# Helper functions
+log_info() {
+  echo -e "${LOG_PREFIX} ${YELLOW}$1${NC}"
+}
+
+log_success() {
+  echo -e "${LOG_PREFIX} ${GREEN}$1${NC}"
+}
+
+log_error() {
+  echo -e "${LOG_PREFIX} ${RED}$1${NC}" >&2
+}
+
+# Main logic
+main() {
+  # Verify ZSH is installed
+  if ! command -v zsh &> /dev/null; then
+    log_error "ZSH is not installed. Aborting."
+    exit 1
+  else
+    log_info "ZSH is installed at $(which zsh)"
+  fi
+
+  # Set ZSH as default shell if needed
+  setup_default_shell
+  
+  # Install Oh My ZSH if needed
+  install_oh_my_zsh
+  
+  log_success "ZSH setup completed successfully"
+  return 0
+}
+
+setup_default_shell() {
+  ZSH_PATH=$(which zsh)
+  
+  # Check if ZSH is already the default shell
+  if [ "$SHELL" = "$ZSH_PATH" ]; then
+    log_success "ZSH is already the default shell"
+    return 0
+  fi
+  
+  log_info "Setting ZSH as default shell..."
+  
+  # Add ZSH to /etc/shells if not already there
+  if ! grep -q "$ZSH_PATH" /etc/shells; then
+    log_info "Adding ZSH to /etc/shells..."
+    echo "$ZSH_PATH" | sudo tee -a /etc/shells
+  fi
+  
+  # Change default shell
+  chsh -s "$ZSH_PATH" $(whoami)
+  log_success "ZSH set as default shell (will take effect on next login)"
+}
+
+install_oh_my_zsh() {
+  OH_MY_ZSH_PATH=$HOME/.oh-my-zsh
+  # Check if Oh My ZSH is already installed
+  if [ -d $OH_MY_ZSH_PATH ]; then
+    log_success "Oh My ZSH is already installed"
+    return 0
+  fi
+  
+  log_info "Installing Oh My ZSH..."
+  
+  # Install Oh My ZSH with unattended flag
+  sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    
+  log_success "Oh My ZSH installed successfully"
+}
+
+# Run the main function
+main "$@"
