@@ -5,7 +5,7 @@ export ZSH="$HOME/.oh-my-zsh"
 
 # Set name of the theme to load 
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+ZSH_THEME="flazz"
 
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
