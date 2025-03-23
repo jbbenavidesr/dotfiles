@@ -1,4 +1,18 @@
-# Script for installing Homebrew and all libs managed by brew
+#!/usr/bin/env bash
+set -e
+
+# Script: brew-libs
+# Purpose: Install Homebrew and all libs managed by brew or update if already installed
+
+# Just run on Mac
+if [[ "$(uname)" != "Darwin" ]]; then
+    echo "Skipping brew setup: not on macOS"
+    exit 0
+fi
+
+SCRIPT_DIR="$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
+REPO_ROOT="$(dirname "$SCRIPT_DIR")"
+BREWFILE="$REPO_ROOT/resources/Brewfile"
 
 which -s brew
 if [[ $? != 0 ]] ; then
@@ -9,5 +23,7 @@ else
     brew update
 fi
 
+echo "Using Brewfile at: $BREWFILE"
+
 # Install Libraries
-brew bundle install --upgrade --global
+brew bundle install --upgrade --file=$BREWFILE
