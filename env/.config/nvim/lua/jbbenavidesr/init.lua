@@ -1,3 +1,3 @@
-require("jbbenavidesr.set")
-require("jbbenavidesr.remap")
+require("jbbenavidesr.options")
+require("jbbenavidesr.keymaps")
 require("jbbenavidesr.lazy")

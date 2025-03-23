@@ -23,3 +23,9 @@ vim.keymap.set({"n", "v"}, "<leader>y", [["+y]], { desc = "[Y]ank into system cl
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<CR>", { desc = "Run tmux-sessionizer to open other project" })
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]], { desc = "Find and replace current word under cursor in the whole file." })
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true }, { desc = "Give executable permissions to current file." })
+
+-- Move between windows
+vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
+vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Move to down window" })
+vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to up window" })
+vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
