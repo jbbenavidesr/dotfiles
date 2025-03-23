@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-# Script: setup-zsh.sh
+# Script: setup-zsh
 # Purpose: Ensure ZSH is the default shell and Oh My ZSH is installed
 # Dependencies: zsh (must be pre-installed)
 
