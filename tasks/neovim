@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+set -e
+
+# Script to build Neovim from source without admin privileges
+# Will install Neovim to ~/.local/
+
+# Script: neovim
+# Purpose: Build Neovim from source, even without admin privileges
+# Dependencies: git, clang or gcc, cmake
+
+# Configuration
+NVIM_SOURCE_DIR="$HOME/.local/src/neovim"
+INSTALL_PREFIX="$HOME/.local/opt/neovim"
+SYMLINK_DIR="$HOME/.local/bin"
+NUM_THREADS=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)
+
+# Set version
+version="v0.10.4"
+if [ ! -z $NVIM_VERSION ]; then
+  version="$NVIM_VERSION"
+fi
+
+echo "version: \"$version\""
+
+# Create necessary directories
+mkdir -p "$NVIM_SOURCE_DIR"
+mkdir -p "$INSTALL_PREFIX"
+mkdir -p "$SYMLINK_DIR"
+
+echo "==== Building Neovim from source ===="
+
+# Check for required build tools
+for cmd in git make cmake gcc g++; do
+  if ! command -v $cmd &> /dev/null; then
+    echo "Error: $cmd is required but not installed."
+    echo "Please install build dependencies first."
+    exit 1
+  fi
+done
+
+# Clone or update repository
+if [ -d "$NVIM_SOURCE_DIR/.git" ]; then
+  echo "Updating existing Neovim source..."
+  cd "$NVIM_SOURCE_DIR"
+  git pull
+else
+  echo "Cloning Neovim repository..."
+  git clone https://github.com/neovim/neovim.git "$NVIM_SOURCE_DIR"
+  cd "$NVIM_SOURCE_DIR"
+fi
+
+# Check out stable version (remove this line if you want the development version)
+git checkout $version
+
+# Build and install
+echo "Building Neovim (this may take several minutes)..."
+make CMAKE_BUILD_TYPE=Release CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$INSTALL_PREFIX" -j$NUM_THREADS
+make install
+
+# Create symlink to bin directory
+ln -sf "$INSTALL_PREFIX/bin/nvim" "$SYMLINK_DIR/nvim"
+
+# Verify installation
+echo ""
+echo "==== Neovim installation complete ===="
+echo "Installed version:"
+$INSTALL_PREFIX/bin/nvim --version | head -n 1
