@@ -76,3 +76,6 @@ if command -v uv &> /dev/null; then
     eval "$(uv generate-shell-completion zsh)"
     eval "$(uvx --generate-shell-completion zsh)"
 fi
+
+# Load local configs if they exist (not tracked in git)
+[ -f "$HOME/.zsh_local" ] && source "$HOME/.zsh_local"
