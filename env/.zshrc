@@ -30,22 +30,10 @@ addToPathFront() {
 }
 
 # User configuration
-export PROJECTS=$HOME/Documents/Projects
-export DOTFILES=$PROJECTS/dotfiles
-
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-    export EDITOR='vim'
-else
-    export EDITOR='nvim'
-fi
-
-# Shell profile
-
-# Aliases
-alias vim="nvim"
 
 # Environment Variables
+export PROJECTS=$HOME/Documents/Projects
+export DOTFILES=$PROJECTS/dotfiles
 export XDG_CONFIG_HOME=$HOME/.config
 
 # Setup Path
@@ -53,9 +41,24 @@ addToPathFront $HOME/.local/scripts
 addToPathFront $HOME/.local/bin
 addToPath $DOTFILES
 
+# Preferred editor for local and remote sessions
+if command -v nvim &> /dev/null; then
+    export EDITOR="nvim"
+    alias vim="nvim"
+elif command -v vim &> /dev/null; then
+    export EDITOR="vim"
+else
+    export EDITOR="nano"
+fi
+
+
+## Setup Applications
+
 # FZF
 # Set up fzf key bindings and fuzzy completion
-source <(fzf --zsh)
+if command -v fzf &> /dev/null; then
+    source <(fzf --zsh)
+fi
 
 # NVM
 export NVM_DIR="$HOME/.nvm"
@@ -69,5 +72,7 @@ if [ -f '/Users/jbbenavidesr/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . 
 if [ -f '/Users/jbbenavidesr/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/jbbenavidesr/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
 # UV Autocompletion
-eval "$(uv generate-shell-completion zsh)"
-eval "$(uvx --generate-shell-completion zsh)"
+if command -v uv &> /dev/null; then 
+    eval "$(uv generate-shell-completion zsh)"
+    eval "$(uvx --generate-shell-completion zsh)"
+fi
