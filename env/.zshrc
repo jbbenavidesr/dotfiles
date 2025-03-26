@@ -33,7 +33,8 @@ addToPathFront() {
 
 # Environment Variables
 export PROJECTS=$HOME/Documents/Projects
-export DOTFILES=$PROJECTS/dotfiles
+export REPOS=$HOME/Repos
+export DOTFILES=$REPOS/personal/dotfiles
 export XDG_CONFIG_HOME=$HOME/.config
 
 # Setup Path
