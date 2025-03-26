@@ -59,6 +59,7 @@ return {
 			{ 'hrsh7th/cmp-nvim-lsp' },
 			{ 'williamboman/mason.nvim' },
 			{ 'williamboman/mason-lspconfig.nvim' },
+			{ 'WhoIsSethDaniel/mason-tool-installer.nvim' },
 		},
 		init = function()
 			-- Reserve a space in the gutter
@@ -66,16 +67,6 @@ return {
 			vim.opt.signcolumn = 'yes'
 		end,
 		config = function()
-			local lsp_defaults = require('lspconfig').util.default_config
-
-			-- Add cmp_nvim_lsp capabilities settings to lspconfig
-			-- This should be executed before you configure any language server
-			lsp_defaults.capabilities = vim.tbl_deep_extend(
-				'force',
-				lsp_defaults.capabilities,
-				require('cmp_nvim_lsp').default_capabilities()
-			)
-
 			-- LspAttach is where you enable features that only work
 			-- if there is a language server active in the file
 			vim.api.nvim_create_autocmd('LspAttach', {
@@ -170,14 +161,51 @@ return {
 				},
 			}
 
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
+
+			local servers = {
+				ruff = {
+					init_options = {
+						settings = {
+							-- Ruff language server settings go here
+						}
+					}
+				},
+
+				lua_ls = {
+					settings = {
+						Lua = {
+							completion = {
+								callSnippet = 'Replace',
+
+							},
+							diagnostics = {
+								globals = { "vim" },
+							}
+						}
+					}
+				}
+			}
+
+			local ensure_installed = vim.tbl_keys(servers or {})
+			vim.list_extend(ensure_installed, {
+				'stylua', -- Used to format Lua code
+			})
+			require('mason-tool-installer').setup { ensure_installed = ensure_installed }
+
 
 			require('mason-lspconfig').setup({
-				ensure_installed = {},
+				ensure_installed = {}, -- explicitly set to an empty table (Installs via mason-tool-installer)
+				automatic_installation = false,
 				handlers = {
 					-- this first function is the "default handler"
 					-- it applies to every language server without a "custom handler"
 					function(server_name)
-						require('lspconfig')[server_name].setup({})
+						local server = servers[server_name] or {}
+						-- Override only values explcitly passed to the configuration
+						server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+						require('lspconfig')[server_name].setup(server)
 					end,
 				}
 			})
