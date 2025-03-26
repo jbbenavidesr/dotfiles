@@ -2,5 +2,5 @@
 --
 -- Detect tabstop and sifhtwidth automatically
 return {
-	"tpope/vim-sleuth",
+  'tpope/vim-sleuth',
 }

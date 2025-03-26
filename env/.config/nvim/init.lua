@@ -1,1 +1,1 @@
-require("jbbenavidesr")
+require 'jbbenavidesr'
