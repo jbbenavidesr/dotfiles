@@ -5,6 +5,9 @@ vim.g.maplocalleader = '\\'
 -- Open File Explorer
 vim.keymap.set('n', '<leader>pv', vim.cmd.Ex, { desc = '[P]roject [V]iew of the files in the explorer.' })
 
+-- Easier Esc from insert mode
+vim.keymap.set('i', 'jk', '<Esc>', { desc = 'Escape insert mode with jk.' })
+
 -- Move highlighted text
 vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv", { desc = 'Move highlighted lines up.' })
 vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv", { desc = 'Move highlighted lines down.' })
