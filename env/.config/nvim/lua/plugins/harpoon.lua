@@ -15,13 +15,13 @@ return {
     vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end, { desc = "[a]ppend current buffer to the end of harpoon list."})
     vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = "Toggle Harpoon Menu."})
 
-    vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end, { desc = "Go to 1st buffer in the harpoon list."})
-    vim.keymap.set("n", "<C-t>", function() harpoon:list():select(2) end, { desc = "Go to 2nd buffer in the harpoon list."})
-    vim.keymap.set("n", "<C-n>", function() harpoon:list():select(3) end, { desc = "Go to 3rd buffer in the harpoon list."})
-    vim.keymap.set("n", "<C-s>", function() harpoon:list():select(4) end, { desc = "Go to 4th buffer in the harpoon list."})
-    vim.keymap.set("n", "<leader><C-h>", function() harpoon:list():replace_at(1) end, { desc = "Replace 1st buffer in harpoon list with current buffer."})
-    vim.keymap.set("n", "<leader><C-t>", function() harpoon:list():replace_at(2) end, { desc = "Replace 2nd buffer in harpoon list with current buffer."})
-    vim.keymap.set("n", "<leader><C-n>", function() harpoon:list():replace_at(3) end, { desc = "Replace 3rd buffer in harpoon list with current buffer."})
-    vim.keymap.set("n", "<leader><C-s>", function() harpoon:list():replace_at(4) end, { desc = "Replace 4th buffer in harpoon list with current buffer."})
+    vim.keymap.set("n", "<leader>1", function() harpoon:list():select(1) end, { desc = "Go to 1st buffer in the harpoon list."})
+    vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end, { desc = "Go to 2nd buffer in the harpoon list."})
+    vim.keymap.set("n", "<leader>3", function() harpoon:list():select(3) end, { desc = "Go to 3rd buffer in the harpoon list."})
+    vim.keymap.set("n", "<leader>4", function() harpoon:list():select(4) end, { desc = "Go to 4th buffer in the harpoon list."})
+    vim.keymap.set("n", "<leader><C-1>", function() harpoon:list():replace_at(1) end, { desc = "Replace 1st buffer in harpoon list with current buffer."})
+    vim.keymap.set("n", "<leader><C-2>", function() harpoon:list():replace_at(2) end, { desc = "Replace 2nd buffer in harpoon list with current buffer."})
+    vim.keymap.set("n", "<leader><C-3>", function() harpoon:list():replace_at(3) end, { desc = "Replace 3rd buffer in harpoon list with current buffer."})
+    vim.keymap.set("n", "<leader><C-4>", function() harpoon:list():replace_at(4) end, { desc = "Replace 4th buffer in harpoon list with current buffer."})
   end
 }
