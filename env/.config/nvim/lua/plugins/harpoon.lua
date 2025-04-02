@@ -13,7 +13,7 @@ return {
 
     vim.keymap.set("n", "<leader>A", function() harpoon:list():prepend() end, { desc = "[A]ppend current buffer to the beginning of harpoon list."})
     vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end, { desc = "[a]ppend current buffer to the end of harpoon list."})
-    vim.keymap.set("n", "<C-e>", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = "Toggle Harpoon Menu."})
+    vim.keymap.set("n", "<leader>h", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end, { desc = "Toggle Harpoon Menu."})
 
     vim.keymap.set("n", "<leader>1", function() harpoon:list():select(1) end, { desc = "Go to 1st buffer in the harpoon list."})
     vim.keymap.set("n", "<leader>2", function() harpoon:list():select(2) end, { desc = "Go to 2nd buffer in the harpoon list."})
