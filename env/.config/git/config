@@ -3,3 +3,7 @@
 	name = Juan Bernardo Benavides Rubio
 [pull]
 	rebase = true
+
+[includeIf "gitdir:~/Repos/loka/"]
+	path = ~/Repos/loka/.gitconfig
+
