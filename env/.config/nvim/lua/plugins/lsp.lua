@@ -8,6 +8,7 @@
 return {
   {
     'williamboman/mason.nvim',
+    version = "^1.0.0",
     lazy = false,
     opts = {},
   },
@@ -57,8 +58,8 @@ return {
     event = { 'BufReadPre', 'BufNewFile' },
     dependencies = {
       { 'hrsh7th/cmp-nvim-lsp' },
-      { 'williamboman/mason.nvim' },
-      { 'williamboman/mason-lspconfig.nvim' },
+      { 'williamboman/mason.nvim', version = "^1.0.0" },
+      { 'williamboman/mason-lspconfig.nvim', version = "^1.0.0" },
       { 'WhoIsSethDaniel/mason-tool-installer.nvim' },
     },
     init = function()
