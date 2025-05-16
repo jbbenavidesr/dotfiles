@@ -15,7 +15,7 @@ SYMLINK_DIR="$HOME/.local/bin"
 NUM_THREADS=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)
 
 # Set version
-version="v0.10.4"
+version="v0.11.1"
 if [ ! -z $NVIM_VERSION ]; then
   version="$NVIM_VERSION"
 fi
@@ -42,7 +42,7 @@ done
 if [ -d "$NVIM_SOURCE_DIR/.git" ]; then
   echo "Updating existing Neovim source..."
   cd "$NVIM_SOURCE_DIR"
-  git pull
+  git fetch
 else
   echo "Cloning Neovim repository..."
   git clone https://github.com/neovim/neovim.git "$NVIM_SOURCE_DIR"
