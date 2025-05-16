@@ -3,15 +3,15 @@
 -- Set the theme plugin and desired colorscheme
 --
 return {
-  'rose-pine/neovim',
-  name = 'rose-pine',
+  'folke/tokyonight.nvim',
+  priority = 1000,
   config = function()
-    require('rose-pine').setup {
+    ---@diagnostic disable-next-line: missing-fields
+    require('tokyonight').setup {
       styles = {
-        italic = false,
+        comments = { italic = false }, -- Disable italics in comments
       },
     }
-
-    vim.cmd.colorscheme 'rose-pine-moon'
+    vim.cmd.colorscheme 'tokyonight-night'
   end,
 }
