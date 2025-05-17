@@ -67,6 +67,7 @@ copy_dir .config $XDG_CONFIG_HOME
 copy_dir .local $HOME/.local
 
 copy_file .zshrc $HOME
+copy_file jbbenavidesr.zsh-theme $HOME/.oh-my-zsh/custom/themes
 copy_file .ready-tmux $HOME
 
 
