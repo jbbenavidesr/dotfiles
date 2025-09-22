@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+set -e
+
+# Script: setup-python
+# Purpose: Setup tools for python development
+# Dependencies: curl
+
+# Configuration
+LOG_PREFIX="[PYTHON SETUP]"
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+# TODO: Move this to main task runner
+# Helper functions
+log_info() {
+  echo -e "${LOG_PREFIX} ${YELLOW}$1${NC}"
+}
+
+log_success() {
+  echo -e "${LOG_PREFIX} ${GREEN}$1${NC}"
+}
+
+log_warn() {
+  echo -e "${LOG_PREFIX} ${YELLOW}$1${NC}" >&2
+}
+
+log_error() {
+  echo -e "${LOG_PREFIX} ${RED}$1${NC}" >&2
+}
+
+# --- Main Function ---
+main() {
+    check_dependencies
+    install_uv
+    install_default_python
+    verify_installation
+}
+
+# --- Subfunctions ---
+
+# Check for required dependencies.
+check_dependencies() {
+    log_info "Checking for dependencies..."
+    if ! command -v curl &> /dev/null; then
+        log_error "curl is not installed. Please install it to continue."
+    fi
+    log_success "All dependencies are met."
+}
+
+# Installs uv if it is not already installed.
+install_uv() {
+    if ! command -v uv &> /dev/null; then
+        log_info "uv not found. Installing..."
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        
+        # The installer modifies shell profiles, but we need to source it for the current session.
+        if [ -f "$HOME/.cargo/env" ]; then
+            source "$HOME/.cargo/env"
+        else
+            log_warn "Could not find cargo environment file. You may need to restart your terminal or add uv to your PATH manually."
+        fi
+
+        # Verify installation in the current session
+        if ! command -v uv &> /dev/null; then
+             log_error "uv installation failed or is not in the current session's PATH."
+        fi
+        log_success "uv installed!"
+    else
+        local uv_path
+        uv_path=$(which uv)
+        log_info "uv was found at ${uv_path}. Skipping installation."
+    fi
+}
+
+# Installs a default version of Python using uv.
+install_default_python() {
+    log_info "Installing a default version of Python using uv..."
+    log_warn "This step uses a preview feature of uv ('python-install-default')."
+    
+    # Run the uv command to install Python
+    uv python install --default --preview-features python-install-default
+    
+    if [ $? -ne 0 ]; then
+        log_error "Failed to install Python with uv."
+    fi
+
+    log_success "Default Python version installed."
+}
+
+# Verifies the final installation.
+verify_installation() {
+    echo ""
+    log_info "Verifying installation..."
+    
+    # Re-source just in case the path was not available before
+    if [ -f "$HOME/.cargo/env" ]; then
+        source "$HOME/.cargo/env"
+    fi
+
+    local UV_VERSION
+    UV_VERSION=$(uv --version)
+    local PYTHON_VERSION
+    PYTHON_VERSION=$(python --version 2>&1) # Redirect stderr to stdout for compatibility
+
+    if [ -z "$UV_VERSION" ] || [ -z "$PYTHON_VERSION" ]; then
+        log_error "Verification failed. Could not find uv or python."
+    fi
+
+    log_success "Python setup is complete!"
+    echo "  -> uv version: ${UV_VERSION}"
+    echo "  -> Python version: ${PYTHON_VERSION}"
+}
+
+# Run the main function
+main "$@"
