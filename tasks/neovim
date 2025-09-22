@@ -15,7 +15,7 @@ SYMLINK_DIR="$HOME/.local/bin"
 NUM_THREADS=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 2)
 
 # Set version
-version="v0.11.1"
+version="v0.11.4"
 if [ ! -z $NVIM_VERSION ]; then
   version="$NVIM_VERSION"
 fi
