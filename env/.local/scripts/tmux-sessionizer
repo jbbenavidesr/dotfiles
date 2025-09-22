@@ -3,7 +3,7 @@
 # Directories where to look for projects
 REPOS_ROOT="$HOME/Repos"
 CONFIG_ROOT="$REPOS_ROOT/personal/dotfiles/env/.config"
-PROJECT_FOLDERS="$REPOS_ROOT/personal $REPOS_ROOT/loka $REPOS_ROOT/master $CONFIG_ROOT"
+PROJECT_FOLDERS="$REPOS_ROOT/personal $REPOS_ROOT/corpus $REPOS_ROOT/master $CONFIG_ROOT"
 
 selected=$(find $PROJECT_FOLDERS -mindepth 1 -maxdepth 1 -type d | fzf)
 if [[ -z "$selected" ]]; then
