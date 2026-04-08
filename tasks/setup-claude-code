@@ -1,0 +1,110 @@
+#!/usr/bin/env bash
+set -e
+
+# Script: setup-claude-code
+# Purpose: Install Claude Code CLI and configure plugins
+# Dependencies: curl
+
+# Configuration
+LOG_PREFIX="[CLAUDE CODE SETUP]"
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+# TODO: Move this to main task runner
+# Helper functions
+log_info() {
+  echo -e "${LOG_PREFIX} ${YELLOW}$1${NC}"
+}
+
+log_success() {
+  echo -e "${LOG_PREFIX} ${GREEN}$1${NC}"
+}
+
+log_warn() {
+  echo -e "${LOG_PREFIX} ${YELLOW}$1${NC}" >&2
+}
+
+log_error() {
+  echo -e "${LOG_PREFIX} ${RED}$1${NC}" >&2
+}
+
+# Plugins to install at user scope
+USER_PLUGINS=(
+  "pyright-lsp@claude-plugins-official"
+  "skill-creator@claude-plugins-official"
+  "context7@claude-plugins-official"
+  "superpowers@claude-plugins-official"
+  "claude-code-setup@claude-plugins-official"
+)
+
+# Extra marketplaces to add
+MARKETPLACES=(
+  "dagster-io/skills"
+)
+
+# --- Main Function ---
+main() {
+    check_dependencies
+    install_claude_code
+    add_marketplaces
+    install_plugins
+    verify_installation
+}
+
+# --- Subfunctions ---
+
+check_dependencies() {
+    log_info "Checking for dependencies..."
+    if ! command -v curl &> /dev/null; then
+        log_error "curl is not installed. Please install it to continue."
+        exit 1
+    fi
+    log_success "All dependencies are met."
+}
+
+install_claude_code() {
+    log_info "Installing/updating Claude Code CLI..."
+    curl -fsSL https://claude.ai/install.sh | bash
+    log_success "Claude Code CLI installed."
+}
+
+add_marketplaces() {
+    log_info "Adding plugin marketplaces..."
+    for marketplace in "${MARKETPLACES[@]}"; do
+        log_info "Adding marketplace: $marketplace"
+        claude plugin marketplace add "$marketplace" 2>/dev/null || \
+            log_info "Marketplace $marketplace may already be configured"
+    done
+    log_success "Marketplaces configured."
+}
+
+install_plugins() {
+    log_info "Installing user-scoped plugins..."
+    for plugin in "${USER_PLUGINS[@]}"; do
+        log_info "Installing plugin: $plugin"
+        claude plugin install "$plugin" 2>/dev/null || \
+            log_info "Plugin $plugin may already be installed"
+    done
+    log_success "Plugins installed."
+}
+
+verify_installation() {
+    echo ""
+    log_info "Verifying installation..."
+
+    local CLAUDE_VERSION
+    CLAUDE_VERSION=$(claude --version 2>&1)
+
+    if [ -z "$CLAUDE_VERSION" ]; then
+        log_error "Verification failed. Could not find claude."
+        exit 1
+    fi
+
+    log_success "Claude Code setup is complete!"
+    echo "  -> Claude version: ${CLAUDE_VERSION}"
+}
+
+# --- Script Execution ---
+main "$@"
