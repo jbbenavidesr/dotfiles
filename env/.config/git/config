@@ -1,6 +1,8 @@
 [user]
 	email = jbbenavidesr@gmail.com
 	name = Juan Bernardo Benavides Rubio
+[core]
+	excludesFile = ~/.config/git/ignore
 [pull]
 	rebase = true
 

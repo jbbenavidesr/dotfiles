@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+# Validate we're in a git repo
+git_common_dir=$(git rev-parse --git-common-dir 2>/dev/null)
+if [[ $? -ne 0 ]]; then
+    echo "Not in a git repository"
+    exit 1
+fi
+
+# Resolve the main repo root
+# --git-common-dir returns a relative path (e.g. ".git", "../.git") from the
+# main worktree, and an absolute path from linked worktrees
+if [[ "$git_common_dir" != /* ]]; then
+    repo_root=$(git rev-parse --show-toplevel)
+else
+    repo_root=$(dirname "$git_common_dir")
+fi
+
+repo_name=$(basename "$repo_root")
+worktrees_dir="$repo_root/.worktrees"
+
+# Switch to tmux session whether you're already on tmux or not
+switch_to() {
+    local session_name=$1
+
+    if [[ -z "$TMUX" ]]; then
+        tmux attach-session -t "$session_name"
+    else
+        tmux switch-client -t "$session_name"
+    fi
+}
+
+# Open a worktree in a new tmux session
+open_worktree() {
+    local wt_path=$1
+    local wt_name=$(basename "$wt_path")
+    local session_name=$(echo "$repo_name/$wt_name" | tr ":,. " "____")
+
+    if ! tmux has-session -t="$session_name" 2>/dev/null; then
+        tmux new-session -ds "$session_name" -c "$wt_path"
+        tmux send-keys -t "$session_name" "ready-tmux" 
+    fi
+
+    switch_to "$session_name"
+}
+
+# Build list of existing worktrees (exclude main worktree)
+existing_worktrees=""
+if [[ -d "$worktrees_dir" ]]; then
+    for wt in "$worktrees_dir"/*/; do
+        if [[ -d "$wt" ]]; then
+            existing_worktrees+="$(basename "$wt")"$'\n'
+        fi
+    done
+    existing_worktrees="${existing_worktrees%$'\n'}"
+fi
+
+# Present fzf menu
+fzf_input="+ Create new worktree"
+if [[ -n "$existing_worktrees" ]]; then
+    fzf_input="$fzf_input"$'\n'"$existing_worktrees"
+fi
+
+selected=$(echo "$fzf_input" | fzf --prompt="$repo_name worktrees > ")
+if [[ -z "$selected" ]]; then
+    exit 0
+fi
+
+if [[ "$selected" == "+ Create new worktree" ]]; then
+    read -p "Worktree name: " wt_name
+    if [[ -z "$wt_name" ]]; then
+        exit 0
+    fi
+
+    read -p "Branch name (default: $wt_name): " branch_name
+    if [[ -z "$branch_name" ]]; then
+        branch_name="$wt_name"
+    fi
+
+    mkdir -p "$worktrees_dir"
+    git worktree add -b "$branch_name" "$worktrees_dir/$wt_name"
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to create worktree"
+        exit 1
+    fi
+
+    open_worktree "$worktrees_dir/$wt_name"
+else
+    open_worktree "$worktrees_dir/$selected"
+fi
