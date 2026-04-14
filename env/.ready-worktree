@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Default worktree layout: Claude Code (left) + terminal (right)
+
+tmux split-window -h -c "#{pane_current_path}"
+clear
+claude

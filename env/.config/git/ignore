@@ -1,3 +1,4 @@
 .DS_Store
 .ready-tmux
+.ready-worktree
 .worktrees/

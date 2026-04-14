@@ -19,29 +19,20 @@ fi
 repo_name=$(basename "$repo_root")
 worktrees_dir="$repo_root/.worktrees"
 
-# Switch to tmux session whether you're already on tmux or not
-switch_to() {
-    local session_name=$1
-
-    if [[ -z "$TMUX" ]]; then
-        tmux attach-session -t "$session_name"
-    else
-        tmux switch-client -t "$session_name"
-    fi
-}
-
-# Open a worktree in a new tmux session
+# Open a worktree in a new tmux window
 open_worktree() {
     local wt_path=$1
     local wt_name=$(basename "$wt_path")
-    local session_name=$(echo "$repo_name/$wt_name" | tr ":,. " "____")
 
-    if ! tmux has-session -t="$session_name" 2>/dev/null; then
-        tmux new-session -ds "$session_name" -c "$wt_path"
-        tmux send-keys -t "$session_name" "ready-tmux" 
+    # If a window with this name already exists, switch to it
+    if tmux list-windows -F '#{window_name}' | grep -qx "$wt_name"; then
+        tmux select-window -t "$wt_name"
+        return
     fi
 
-    switch_to "$session_name"
+    # Create new window and let the hook set up the layout
+    tmux new-window -n "$wt_name" -c "$wt_path"
+    tmux send-keys "ready-worktree" Enter
 }
 
 # Build list of existing worktrees (exclude main worktree)

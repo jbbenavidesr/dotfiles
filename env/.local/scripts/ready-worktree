@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if [[ -x ".ready-worktree" ]]; then
+    ./.ready-worktree
+elif [[ -x "$HOME/.ready-worktree" ]]; then
+    ~/.ready-worktree
+fi
+
+clear

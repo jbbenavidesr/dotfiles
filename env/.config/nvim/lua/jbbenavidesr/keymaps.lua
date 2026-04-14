@@ -20,7 +20,7 @@ vim.keymap.set({ 'n', 'v' }, '<leader>y', [["+y]], { desc = '[Y]ank into system 
 
 -- Some custom utility commands
 vim.keymap.set('n', '<C-f>', '<cmd>silent !tmux neww tmux-sessionizer<CR>', { desc = 'Run tmux-sessionizer to open other project' })
-vim.keymap.set('n', '<C-g>', '<cmd>silent !tmux neww tmux-worktree<CR>', { desc = 'Open a git worktree in a new tmux session' })
+vim.keymap.set('n', '<C-g>', '<cmd>silent !tmux neww tmux-worktree<CR>', { desc = 'Open a git worktree in a new tmux window' })
 vim.keymap.set(
   'n',
   '<leader>s',
