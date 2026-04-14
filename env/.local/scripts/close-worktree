@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+# Validate we're in a linked git worktree (not the main one)
+git_common_dir=$(git rev-parse --git-common-dir 2>/dev/null)
+if [[ $? -ne 0 ]]; then
+    echo "Not in a git repository"
+    exit 1
+fi
+
+if [[ "$git_common_dir" != /* ]]; then
+    echo "Not in a linked worktree. Run this from within a worktree."
+    exit 1
+fi
+
+repo_root=$(dirname "$git_common_dir")
+wt_path=$(git rev-parse --show-toplevel)
+wt_name=$(basename "$wt_path")
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+echo "Worktree: $wt_name ($wt_path)"
+echo "Branch:   $branch"
+echo ""
+
+# Check if branch is safe to delete
+if [[ "$branch" == "HEAD" ]]; then
+    echo "Detached HEAD — no branch to delete."
+    echo "Removing worktree only."
+    echo ""
+    read -p "Continue? [y/N] " confirm
+    if [[ "$confirm" != [yY] ]]; then
+        exit 0
+    fi
+
+    cd "$repo_root"
+    git worktree remove "$wt_path"
+    if [[ $? -ne 0 ]]; then
+        echo "Failed to remove worktree. It may have uncommitted changes."
+        echo "To force: git worktree remove --force \"$wt_path\""
+        exit 1
+    fi
+
+    tmux kill-window -t "$wt_name" 2>/dev/null
+    exit 0
+fi
+
+is_safe=false
+
+if git merge-base --is-ancestor "$branch" main 2>/dev/null; then
+    echo "Branch is merged into main."
+    is_safe=true
+elif git rev-parse --verify "origin/$branch" &>/dev/null; then
+    echo "Branch is pushed to origin."
+    is_safe=true
+fi
+
+if [[ "$is_safe" == false ]]; then
+    echo "WARNING: Branch '$branch' is not merged into main and not pushed to origin."
+    echo ""
+    echo "To force close, run:"
+    echo "  cd \"$repo_root\" && git worktree remove \"$wt_path\" && git branch -D \"$branch\""
+    exit 1
+fi
+
+read -p "Close worktree and delete branch? [y/N] " confirm
+if [[ "$confirm" != [yY] ]]; then
+    exit 0
+fi
+
+# Remove worktree and delete branch from the repo root
+cd "$repo_root"
+git worktree remove "$wt_path"
+if [[ $? -ne 0 ]]; then
+    echo "Failed to remove worktree. It may have uncommitted changes."
+    echo "To force: git worktree remove --force \"$wt_path\""
+    exit 1
+fi
+
+git branch -D "$branch"
+echo ""
+echo "Worktree '$wt_name' removed and branch '$branch' deleted."
+
+tmux kill-window -t "$wt_name" 2>/dev/null
