@@ -35,24 +35,27 @@ open_worktree() {
     tmux send-keys "ready-worktree" Enter
 }
 
-# Build list of existing worktrees (exclude main worktree)
-existing_worktrees=""
-if [[ -d "$worktrees_dir" ]]; then
-    for wt in "$worktrees_dir"/*/; do
-        if [[ -d "$wt" ]]; then
-            existing_worktrees+="$(basename "$wt")"$'\n'
+# Build list of existing worktrees (exclude main worktree) using git
+# Each entry is "name<TAB>path" to avoid associative arrays (not supported in bash 3.2)
+wt_entries=""
+while IFS= read -r line; do
+    if [[ "$line" == worktree\ * ]]; then
+        wt_path="${line#worktree }"
+        if [[ "$wt_path" != "$repo_root" ]]; then
+            wt_name=$(basename "$wt_path")
+            wt_entries+="$wt_name"$'\t'"$wt_path"$'\n'
         fi
-    done
-    existing_worktrees="${existing_worktrees%$'\n'}"
-fi
+    fi
+done < <(git worktree list --porcelain)
+wt_entries="${wt_entries%$'\n'}"
 
-# Present fzf menu
+# Present fzf menu — show only name (first tab-field), but selected line includes path
 fzf_input="+ Create new worktree"
-if [[ -n "$existing_worktrees" ]]; then
-    fzf_input="$fzf_input"$'\n'"$existing_worktrees"
+if [[ -n "$wt_entries" ]]; then
+    fzf_input="$fzf_input"$'\n'"$wt_entries"
 fi
 
-selected=$(echo "$fzf_input" | fzf --prompt="$repo_name worktrees > ")
+selected=$(echo "$fzf_input" | fzf --prompt="$repo_name worktrees > " --delimiter=$'\t' --with-nth=1)
 if [[ -z "$selected" ]]; then
     exit 0
 fi
@@ -77,5 +80,6 @@ if [[ "$selected" == "+ Create new worktree" ]]; then
 
     open_worktree "$worktrees_dir/$wt_name"
 else
-    open_worktree "$worktrees_dir/$selected"
+    wt_path=$(printf '%s' "$selected" | cut -f2)
+    open_worktree "$wt_path"
 fi
