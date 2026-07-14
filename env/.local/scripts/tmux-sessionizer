@@ -31,7 +31,7 @@ selected_name=$(basename $selected  | tr ":,. " "____")
 
 if ! tmux has-session -t=$selected_name 2> /dev/null ; then
     tmux new-session -ds $selected_name -c $selected
-    tmux send-keys -t $selected_name "ready-tmux" 
+    tmux send-keys -t $selected_name "ready-tmux " 
 fi
 
 switch_to $selected_name
