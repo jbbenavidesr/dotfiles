@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
 
-# Directories where to look for projects
-REPOS_ROOT="$HOME/Repos"
-CONFIG_ROOT="$REPOS_ROOT/personal/dotfiles/env/.config"
-PROJECT_FOLDERS="$REPOS_ROOT/personal $REPOS_ROOT/corpus $REPOS_ROOT/master $CONFIG_ROOT"
+# Directories where to look for projects.
+#
+# Override per-machine by exporting TS_SEARCH_PATHS (space-separated), e.g. in
+# ~/.zsh_local. Each path is scanned one level deep, so this supports both a
+# flat layout (TS_SEARCH_PATHS="$HOME/Repos") and a nested one
+# (TS_SEARCH_PATHS="$HOME/Repos/personal $HOME/Repos/work").
+#
+# Default: flat ~/Repos layout.
+SEARCH_PATHS="${TS_SEARCH_PATHS:-$HOME/Repos}"
 
-selected=$(find $PROJECT_FOLDERS -mindepth 1 -maxdepth 1 -type d | fzf)
+selected=$(find $SEARCH_PATHS -mindepth 1 -maxdepth 1 -type d | fzf)
 if [[ -z "$selected" ]]; then
     exit 0
 fi

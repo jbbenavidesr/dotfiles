@@ -6,19 +6,24 @@ My personal dotfiles and system setup scripts. This repository contains everythi
 
 - **tasks/**: Individual scripts for various system setup tasks (e.g. installation scripts)
 - **run-tasks**: Script that runs executables in tasks/
-- **deploy-configs**: Script that deploys all configuration files to their proper locations
+- **deploy-env**: Script that deploys all configuration files to their proper locations
 
 - **env/**: Contains all files to set up the environment and all necessary configs.
 
 ## 🚀 Quick Start
 
-1. Clone this repository:
+1. Clone this repository **with submodules** (TPM, the tmux plugin manager, is a
+   submodule — without this, tmux plugins and theme won't install):
 
-   `git clone https://github.com/jbbenavidesr/dotfiles.git && cd dotfiles`
+   `git clone --recurse-submodules https://github.com/jbbenavidesr/dotfiles.git && cd dotfiles`
+
+   If you already cloned without `--recurse-submodules`, run:
+
+   `git submodule update --init --recursive`
 
 2. Make scripts executable:
 
-   `chmod +x run-tasks deploy-configs && chmod +x tasks/*`
+   `chmod +x run-tasks deploy-env && chmod +x tasks/*`
 
 3. Run setup tasks:
 
@@ -26,7 +31,7 @@ My personal dotfiles and system setup scripts. This repository contains everythi
 
 4. Deploy configuration files:
 
-   `./deploy-configs`
+   `./deploy-env`
 
 ## 📝 How It Works
 

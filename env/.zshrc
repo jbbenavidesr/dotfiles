@@ -34,7 +34,9 @@ addToPathFront() {
 # Environment Variables
 export PROJECTS=$HOME/Documents/Projects
 export REPOS=$HOME/Repos
-export DOTFILES=$REPOS/personal/dotfiles
+# Location of this repo. Override in ~/.zsh_local on machines with a nested
+# layout (e.g. export DOTFILES=$REPOS/personal/dotfiles).
+export DOTFILES=${DOTFILES:-$REPOS/dotfiles}
 export XDG_CONFIG_HOME=$HOME/.config
 
 # Setup Path
@@ -65,12 +67,6 @@ fi
 export NVM_DIR="$XDG_CONFIG_HOME/nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/jbbenavidesr/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/jbbenavidesr/Downloads/google-cloud-sdk/path.zsh.inc'; fi
-
-# The next line enables shell command completion for gcloud.
-if [ -f '/Users/jbbenavidesr/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/jbbenavidesr/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
 # UV Autocompletion
 if command -v uv &> /dev/null; then 

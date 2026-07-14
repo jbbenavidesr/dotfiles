@@ -33,7 +33,7 @@ log_error() {
 
 # --- Main Function ---
 main() {
-    export NVM_DIR="${NVM_DIR:-$XDG_CONFIG_HOM/nvm}"
+    export NVM_DIR="${NVM_DIR:-$XDG_CONFIG_HOME/nvm}"
 
     install_nvm
     source_nvm
@@ -76,7 +76,7 @@ ensure_nvm_config() {
         log_info "Adding nvm configuration to ~/.zshrc"
         echo '' >> "$HOME/.zshrc"
         echo '# Node Version Manager (nvm)' >> "$HOME/.zshrc"
-        echo 'export NVM_DIR="$XDG_CONFIG_HOME}/nvm"' >> "$HOME/.zshrc"
+        echo 'export NVM_DIR="$XDG_CONFIG_HOME/nvm"' >> "$HOME/.zshrc"
         echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> "$HOME/.zshrc"
         echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> "$HOME/.zshrc"
         log_warn "nvm config added to ~/.zshrc. You'll need to restart your terminal for it to take effect."
@@ -125,8 +125,8 @@ verify_installation() {
     fi
 
     log_success "Node.js setup is complete!"
-    echo "  -> Node version: ${C_YELLOW}${NODE_VERSION}${C_RESET}"
-    echo "  -> npm version:  ${C_YELLOW}${NPM_VERSION}${C_RESET}"
+    echo "  -> Node version: ${YELLOW}${NODE_VERSION}${NC}"
+    echo "  -> npm version:  ${YELLOW}${NPM_VERSION}${NC}"
     echo ""
     log_info "Please restart your terminal or run 'source ~/.zshrc' to start using nvm."
 }
